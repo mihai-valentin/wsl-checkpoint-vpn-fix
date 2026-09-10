@@ -39,10 +39,10 @@ It does if all of these are true:
 - Your VPN runs in **hub mode**: all traffic, including internet traffic, goes through the VPN.
 - WSL works with the VPN disconnected and stops working the moment it connects.
 
-To confirm, keep WSL running in NAT mode (see [step 1](#1-switch-wsl-to-nat-mode-with-dns-tunneling)), connect the VPN, and run the fix script in preview mode. Preview mode needs no admin rights and changes nothing:
+To confirm, keep WSL running in NAT mode (see [step 1](#1-switch-wsl-to-nat-mode-with-dns-tunneling)), connect the VPN, and run the fix script in preview mode from the repository root. Preview mode needs no admin rights and changes nothing:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Fix-WslCheckPointRoutes.ps1 -WhatIf
+powershell -ExecutionPolicy Bypass -File .\src\Fix-WslCheckPointRoutes.ps1 -WhatIf
 ```
 
 If you are affected, it lists the routes it would remove, for example:
@@ -112,10 +112,10 @@ Inside WSL, `wslinfo --networking-mode` should now print `nat`. DNS tunneling (t
 
 ### 2. Remove the routes after the VPN connects
 
-Connect the VPN. Then, in an **elevated** PowerShell in the folder with the scripts, run:
+Connect the VPN. Then, in an **elevated** PowerShell at the repository root, run:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Fix-WslCheckPointRoutes.ps1 -RecheckSeconds 30
+powershell -ExecutionPolicy Bypass -File .\src\Fix-WslCheckPointRoutes.ps1 -RecheckSeconds 30
 ```
 
 The script:
@@ -137,10 +137,10 @@ The change lasts until the VPN disconnects. The client adds the routes again on 
 
 ### 3. Optional: run it automatically
 
-In an elevated PowerShell:
+In an elevated PowerShell at the repository root:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Register-WslCheckPointFixTask.ps1
+powershell -ExecutionPolicy Bypass -File .\src\Register-WslCheckPointFixTask.ps1
 ```
 
 This copies the fix script to `C:\ProgramData\WslCheckPointFix`, a folder only administrators can modify, and registers a scheduled task named **WSL Check Point route fix**. The task runs as SYSTEM whenever Windows reports a newly connected network (event 10000 in `Microsoft-Windows-NetworkProfile/Operational`). That includes the VPN connecting, and reconnecting after sleep. It waits up to 60 seconds for the client to add its routes, removes them, and checks again 30 seconds later. On ordinary network changes it finds nothing to do and exits.
@@ -150,7 +150,7 @@ The task's log is `C:\ProgramData\WslCheckPointFix\fix.log`, which you can read 
 To remove the task and its folder:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Register-WslCheckPointFixTask.ps1 -Uninstall
+powershell -ExecutionPolicy Bypass -File .\src\Register-WslCheckPointFixTask.ps1 -Uninstall
 ```
 
 ## If you can change the Check Point configuration

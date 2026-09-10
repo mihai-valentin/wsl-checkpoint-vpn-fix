@@ -7,7 +7,7 @@
 $ErrorActionPreference = 'Stop'
 
 # ProviderPath, not Path: on a UNC share Path is provider-qualified, which the parser cannot open.
-$path = (Resolve-Path (Join-Path $PSScriptRoot '..\Fix-WslCheckPointRoutes.ps1')).ProviderPath
+$path = (Resolve-Path (Join-Path $PSScriptRoot '..\src\Fix-WslCheckPointRoutes.ps1')).ProviderPath
 $parseErrors = $null
 $ast = [System.Management.Automation.Language.Parser]::ParseFile($path, [ref]$null, [ref]$parseErrors)
 if ($parseErrors) { throw "Parse errors in ${path}: $($parseErrors -join '; ')" }
