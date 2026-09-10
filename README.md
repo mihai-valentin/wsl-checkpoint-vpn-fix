@@ -8,6 +8,28 @@ Your WSL traffic still goes through the VPN. The fix only repairs the private li
 
 > Unofficial. Not affiliated with Check Point Software Technologies or Microsoft.
 
+## The problem
+
+With the VPN connected, Windows works normally: the browser, PowerShell and Windows apps all reach the internet through the VPN. Inside WSL, nothing can connect anywhere:
+
+```console
+$ ping -c 2 8.8.8.8
+2 packets transmitted, 0 received, 100% packet loss, time 1032ms
+
+$ curl -sS https://www.google.com
+curl: (28) Failed to connect to www.google.com port 443 after 9964 ms: Connection timed out
+
+$ nslookup example.com 8.8.8.8
+;; communications error to 8.8.8.8#53: timed out
+```
+
+- `apt`, `git clone`, `pip`, `npm` and anything else that opens a connection hang, then time out.
+- **Names still resolve.** `getent hosts example.com` returns an address, because WSL's DNS tunneling answers through Windows. So it is not a DNS problem, even though it looks like one at first.
+- **Disconnecting the VPN brings everything back immediately.** Reconnecting breaks it again.
+- **Switching WSL between NAT and mirrored networking mode does not help.** Both break, for different reasons (see [Why it happens](#why-it-happens)).
+
+It is easy to take this for a DNS or MTU problem, and most advice online goes that way. Neither is the cause here: see [What does not help](#what-does-not-help). If you have turned DNS tunneling off (`dnsTunneling=false`), name lookups may fail as well; that combination was not tested.
+
 ## Does this apply to you?
 
 It does if all of these are true:
