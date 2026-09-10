@@ -1,0 +1,8 @@
+# Workspace-internal: planning, specs and orchestration state. These describe
+# how and why the tool was built, not the tool. Kept on disk, never published.
+CLAUDE.md
+AGENTS.md
+idea.md
+.claude/
+.agent-orch/
+notes/
