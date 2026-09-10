@@ -1,0 +1,97 @@
+name: Bug report
+description: The fix didn't work, or did something unexpected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Please redact before posting.** Replace VPN gateway addresses and hostnames,
+        your Office Mode and LAN addresses, usernames, computer names and your employer's
+        name. The WSL subnet (for example `172.23.160.0/20`) is random and safe to share.
+        Don't paste raw `trac.log` excerpts without reading them first.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected instead
+      placeholder: |
+        The fix script said it removed four routes, but curl from WSL still times out.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: Which of these is closest?
+      options:
+        - "-WhatIf finds no routes to remove, but WSL is still offline"
+        - The script removed routes, but WSL is still offline
+        - WSL works at first, then breaks again while the VPN stays connected
+        - The scheduled task doesn't run, or its log shows nothing
+        - The script or the installer fails with an error
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Windows, WSL and Check Point versions
+      description: Your Windows version, the first line of `wsl --version`, and the client version from the Check Point About window.
+      placeholder: "Windows 11 25H2, WSL 2.6.3, Check Point Endpoint Security VPN E88.70"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: WSL networking mode
+      description: Run `wslinfo --networking-mode` inside WSL.
+      options:
+        - nat
+        - mirrored
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: hub
+    attributes:
+      label: Hub-mode settings
+      description: |
+        Output of this PowerShell command. It prints only the two setting values, so it is safe to share.
+        ```powershell
+        Select-String -Path "${env:ProgramFiles(x86)}\CheckPoint\Endpoint Connect\trac.log" -Pattern '(neo_route_all_traffic_through_gateway|exclude_local_networks_in_hub_mode) return value (\w+)' | Group-Object { $_.Matches[0].Groups[1].Value } | ForEach-Object { '{0} = {1}' -f $_.Name, $_.Group[-1].Matches[0].Groups[2].Value }
+        ```
+      render: text
+
+  - type: textarea
+    id: whatif
+    attributes:
+      label: Preview output
+      description: |
+        Run this from the repository root while the VPN is connected. It needs no admin rights and changes nothing.
+        ```powershell
+        powershell -ExecutionPolicy Bypass -File .\src\Fix-WslCheckPointRoutes.ps1 -WhatIf
+        ```
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Output of the fix, or the task log
+      description: The console output of the fix script, or `C:\ProgramData\WslCheckPointFix\fix.log` if you use the scheduled task.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before filing
+      options:
+        - label: I removed gateway addresses, hostnames, usernames and my employer's name from everything above
+          required: true
+        - label: I read the README's "Limitations" and "What does not help" sections
+          required: true
+        - label: I'm using the latest version of this repository

@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest something this should do
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One thing to know before you write: **the fix must never route traffic around the VPN**,
+        and it has to stay short enough to read before running it as administrator.
+
+        Settled constraints (open an issue before working against them): PowerShell only, working
+        in Windows PowerShell 5.1 and PowerShell 7 with no modules to install; ASCII-only scripts;
+        every change previewable with `-WhatIf`; no persistent route changes; no mirrored-mode
+        support; no network calls or telemetry.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the situation where the fix falls short?
+      description: Describe the situation, not the solution.
+      placeholder: >-
+        After my laptop wakes from sleep the VPN reconnects, and WSL stays offline
+        until I run the script again.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like it to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Does this keep all WSL traffic inside the VPN?
+      description: If it touches routes outside the WSL subnet, explain why that is safe.
+    validations:
+      required: true

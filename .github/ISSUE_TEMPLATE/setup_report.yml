@@ -1,0 +1,48 @@
+name: Setup report
+description: Tell us whether the fix worked on your setup
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The fix has only been tested on a handful of setups. A short report saying it worked
+        (or didn't) on yours helps the next person decide whether to trust it.
+
+        **Please redact before posting:** no gateway addresses, hostnames, usernames or employer names.
+        If it didn't work and you want help, a bug report gets you further.
+
+  - type: dropdown
+    id: result
+    attributes:
+      label: Did it work?
+      options:
+        - "Yes: WSL has connectivity with the VPN connected"
+        - Partly
+        - "No"
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Windows, WSL and Check Point versions
+      description: Your Windows version, the first line of `wsl --version`, and the client version from the Check Point About window.
+      placeholder: "Windows 11 25H2, WSL 2.6.3, Check Point Endpoint Security VPN E88.70"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: how
+    attributes:
+      label: How did you run it?
+      options:
+        - By hand after connecting
+        - With the scheduled task
+        - Both
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything worth knowing
+      description: Distro, Docker Desktop, reconnects after sleep, anything that surprised you.

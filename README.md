@@ -80,15 +80,16 @@ You can see this in the client log, `C:\Program Files (x86)\CheckPoint\Endpoint 
 [vna_rtm] vnartm_perform_route_op: ADDED
 ```
 
-To check the two settings behind it:
+To check the two settings behind it, run this in PowerShell after the VPN has connected at least once. It prints only the two values, so the output is safe to share:
 
 ```powershell
 Select-String -Path "${env:ProgramFiles(x86)}\CheckPoint\Endpoint Connect\trac.log" `
-    -Pattern 'neo_route_all_traffic_through_gateway return value', 'exclude_local_networks_in_hub_mode return value' |
-    Select-Object -Last 2
+    -Pattern '(neo_route_all_traffic_through_gateway|exclude_local_networks_in_hub_mode) return value (\w+)' |
+    Group-Object { $_.Matches[0].Groups[1].Value } |
+    ForEach-Object { '{0} = {1}' -f $_.Name, $_.Group[-1].Matches[0].Groups[2].Value }
 ```
 
-`neo_route_all_traffic_through_gateway return value true` means hub mode. `exclude_local_networks_in_hub_mode return value false` means local networks are pulled into the tunnel.
+`neo_route_all_traffic_through_gateway = true` means hub mode. `exclude_local_networks_in_hub_mode = false` means local networks are pulled into the tunnel.
 
 ### In mirrored mode
 
@@ -206,6 +207,10 @@ powershell -ExecutionPolicy Bypass -File .\tests\Test-FixWslCheckPointRoutes.ps1
 - [Check Point: Excluding Local Networks from Hub Mode](https://sc1.checkpoint.com/documents/RemoteAccessClients_forWindows_AdminGuide/Content/Topics-RA-VPN-for-Win/Excluding-Local-Networks-from-Hub-Mode.htm)
 - [Check Point: Remote Access Modes](https://sc1.checkpoint.com/documents/RemoteAccessClients_forWindows_AdminGuide/Content/Topics-RA-VPN-for-Win/Remote-Access-Modes.htm): what hub mode is
 - [sakai135/wsl-vpnkit](https://github.com/sakai135/wsl-vpnkit): a different approach that sends WSL traffic through a Windows process (not tested with this setup)
+
+## Contributing
+
+Bug reports, setup reports and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md). Please remove gateway addresses, hostnames, usernames and your employer's name from anything you post. For security issues, see [SECURITY.md](SECURITY.md).
 
 ## License
 
