@@ -1,5 +1,7 @@
 # wsl-checkpoint-vpn-fix
 
+[![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-d97757)](https://claude.com/claude-code)
+
 **Get WSL 2 networking back while the Check Point Endpoint Security VPN is connected in hub (full-tunnel) mode, without changing the VPN's configuration.**
 
 As soon as the VPN connects, WSL loses all connectivity: `curl`, `apt`, `git`, `pip` and `ping` all time out, while Windows itself keeps working. This repository explains why, and ships a small PowerShell script that removes the routes that cause it, plus an optional scheduled task that does this automatically every time the VPN connects.
